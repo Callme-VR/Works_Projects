@@ -1,7 +1,6 @@
 
 This project aims to bridge the communication gap between hearing individuals and the Deaf/Hard of Hearing community. Understanding proper social behavior and communication etiquette is essential for meaningful interactions.
 
-# Hand Gesture Recognition System
 ## 🌍 Social Behaviors & Communication Guide
 ### Understanding Sign Language Communication
 
