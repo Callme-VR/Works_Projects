@@ -1,4 +1,4 @@
-# Hand Gesture Recognition System
+# Social Behavior Sign Language Recognition System
 
 ## Overview
 A complete computer vision system for recognizing hand gestures using TensorFlow and OpenCV.
