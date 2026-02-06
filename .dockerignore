@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (optional - include if you want to persist collected data)
+# Sign_data/
+
+# Models (already included in repo, but ignore large temp files)
+*.h5.tmp
+*.h5.bak
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore

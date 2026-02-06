@@ -203,7 +203,82 @@ d:\Works_Projects\
 pip install -r requirements.txt
 ```
 
-## 🚀 How to Run the Project
+## � Docker Setup
+
+### Prerequisites
+- Docker installed on your system
+- X11 server (for GUI display on Linux/Mac)
+- Camera access permissions
+
+### Build Docker Image
+```bash
+docker build -t hand-gesture-recognition .
+```
+
+### Run with Docker (Linux/Mac with X11)
+```bash
+# Allow X11 forwarding
+xhost +local:docker
+
+# Run the container with display and camera access
+docker run -it --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  --device=/dev/video0:/dev/video0 \
+  hand-gesture-recognition
+
+# For data collection
+docker run -it --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  --device=/dev/video0:/dev/video0 \
+  hand-gesture-recognition python data_collection.py
+```
+
+### Run with Docker (Windows)
+Windows requires additional setup for GUI applications in Docker. Use one of these methods:
+
+**Method 1: Using VcXsrv (Recommended)**
+1. Install [VcXsrv](https://sourceforge.net/projects/vcxsrv/)
+2. Start VcXsrv with "Disable access control" option
+3. Get your IP: `ipconfig` and look for IPv4 Address
+4. Run Docker:
+```powershell
+$env:DISPLAY = "your-ip:0.0"
+docker run -it --rm `
+  -e DISPLAY=$env:DISPLAY `
+  --device=//./pipe/docker_engine `  # Camera access limited on Windows Docker
+  hand-gesture-recognition
+```
+
+**Method 2: Without GUI (Headless Mode)**
+```bash
+# For testing without display (logs predictions only)
+docker run -it --rm hand-gesture-recognition python -c "print('Model loaded successfully')"
+```
+
+### Docker Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `docker build -t hand-gesture-recognition .` | Build the image |
+| `docker run -it --rm hand-gesture-recognition` | Run real-time recognition |
+| `docker run -it --rm hand-gesture-recognition python data_collection.py` | Run data collection |
+| `docker images` | List built images |
+| `docker rmi hand-gesture-recognition` | Remove image |
+
+### Docker Volume (Optional)
+Mount local data directory to persist collected images:
+```bash
+docker run -it --rm \
+  -v $(pwd)/Sign_data:/app/Sign_data \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  --device=/dev/video0:/dev/video0 \
+  hand-gesture-recognition python data_collection.py
+```
+
+## �🚀 How to Run the Project
 
 ### Step 1: Data Collection (First Time)
 ```bash

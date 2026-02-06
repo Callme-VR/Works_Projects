@@ -3,3 +3,4 @@ cvzone
 numpy
 mediapipe
 tensorflow
+tf-keras

@@ -2,6 +2,14 @@ import cv2
 import numpy as np
 import math
 import os
+import time
+import tensorflow as tf
+from collections import Counter, deque
+
+try:
+    import tf_keras as tfk  # type: ignore
+except Exception:
+    tfk = None
 
 # Simple hand detection using skin color (same as data collection)
 def detect_hand(frame):
@@ -67,16 +75,56 @@ def crop_and_resize_hand(frame, contour):
 # Simple placeholder classifier (replace with actual model)
 class SimpleClassifier:
     def __init__(self, model_path, labels_path):
-        self.labels = ["Hello","I love you","No","Okay","Please","Thank you","Yes"]
-        print("Note: Using placeholder classifier. Replace with actual model.")
-    
+        self.labels = self._load_labels(labels_path)
+        self.model = None
+        try:
+            # Many Teachable Machine / older Keras .h5 models load better with tf-keras.
+            if tfk is not None:
+                self.model = tfk.models.load_model(model_path, compile=False)
+            else:
+                self.model = tf.keras.models.load_model(model_path, compile=False)
+        except Exception as e:
+            print("Failed to load model. Predictions will be disabled.")
+            print(e)
+ 
+    def _load_labels(self, labels_path):
+        try:
+            with open(labels_path, "r", encoding="utf-8") as f:
+                labels = []
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split(maxsplit=1)
+                    if len(parts) == 2:
+                        labels.append(parts[1])
+                    else:
+                        labels.append(parts[0])
+                return labels
+        except Exception:
+            return []
+     
     def getPrediction(self, img, draw=True):
-        # Placeholder prediction - replace with actual model inference
-        import random
-        index = random.randint(0, len(self.labels)-1)
-        prediction = [0.1] * len(self.labels)
-        prediction[index] = 0.9  # Mock confidence
-        return prediction, index
+        if self.model is None or not self.labels:
+            return [], -1
+ 
+        input_shape = self.model.input_shape
+        target_h = input_shape[1] if len(input_shape) >= 3 and input_shape[1] is not None else 300
+        target_w = input_shape[2] if len(input_shape) >= 3 and input_shape[2] is not None else 300
+ 
+        img_resized = cv2.resize(img, (target_w, target_h))
+        x = img_resized.astype(np.float32) / 255.0
+        x = np.expand_dims(x, axis=0)
+        pred = self.model.predict(x, verbose=0)[0]
+        index = int(np.argmax(pred))
+ 
+        # If label count doesn't match model output, avoid index errors.
+        if hasattr(pred, "shape") and len(pred.shape) == 1:
+            if len(self.labels) != int(pred.shape[0]):
+                # Keep running, but clamp index to available labels.
+                index = min(index, len(self.labels) - 1)
+ 
+        return pred.tolist(), index
 
 cap = cv2.VideoCapture(0)
 offset = 20
@@ -84,12 +132,18 @@ imgSize = 300
 
 # Initialize classifier (placeholder - replace with actual model)
 try:
-    classifier = SimpleClassifier("Model/keras_model.h5", "Model/labels.txt")
+    classifier = SimpleClassifier(os.path.join("models", "keras_model.h5"), os.path.join("models", "labels.txt"))
 except:
     print("Model files not found. Using placeholder classifier.")
     classifier = SimpleClassifier("", "")
 
-labels = ["Hello","I love you","No","Okay","Please","Thank you","Yes"]
+labels = classifier.labels
+
+prediction_interval_s = 0.2
+last_prediction_time = 0.0
+recent_indices = deque(maxlen=7)
+last_shown_index = None
+last_shown_conf = 0.0
 
 while True:
     success, img = cap.read()
@@ -109,13 +163,32 @@ while True:
         imgWhite = crop_and_resize_hand(img, contour)
         
         if imgWhite is not None:
-            # Get prediction
-            prediction, index = classifier.getPrediction(imgWhite, draw=False)
-            print(f"Prediction: {labels[index]}, Confidence: {max(prediction):.2f}")
+            prediction = []
+            index = -1
+            confidence = 0.0
+ 
+            now = time.time()
+            if now - last_prediction_time >= prediction_interval_s:
+                prediction, index = classifier.getPrediction(imgWhite, draw=False)
+                last_prediction_time = now
+ 
+                if prediction and index >= 0 and index < len(labels):
+                    confidence = float(max(prediction))
+                    recent_indices.append(index)
+ 
+            if recent_indices:
+                stable_index = Counter(recent_indices).most_common(1)[0][0]
+                stable_conf = confidence if index == stable_index else last_shown_conf
+                 
+                if stable_index != last_shown_index or stable_conf != last_shown_conf:
+                    print(f"Prediction: {labels[stable_index]}, Confidence: {stable_conf:.2f}")
+                    last_shown_index = stable_index
+                    last_shown_conf = stable_conf
             
             # Draw bounding box and label
             cv2.rectangle(imgOutput, (x-offset, y-offset-70), (x-offset+400, y-offset+60-50), (0,255,0), cv2.FILLED)
-            cv2.putText(imgOutput, labels[index], (x, y-30), cv2.FONT_HERSHEY_COMPLEX, 2, (0,0,0), 2)
+            if last_shown_index is not None and last_shown_index < len(labels):
+                cv2.putText(imgOutput, labels[last_shown_index], (x, y-30), cv2.FONT_HERSHEY_COMPLEX, 2, (0,0,0), 2)
             cv2.rectangle(imgOutput, (x-offset, y-offset), (x + w + offset, y+h + offset), (0,255,0), 4)
             
             # Show processed images
