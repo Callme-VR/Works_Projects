@@ -150,6 +150,15 @@ Key parameters in `data_collection.py` and `test.py`:
 
 ---
 
+## 🔮 Roadmap: Upcoming Features
+
+We are currently expanding the system's capabilities beyond gesture recognition:
+- **Human Behavior Detection**: A new module to classify emotional and physical states:
+  - 😆 **Laugh** | 😡 **Angry** | 😴 **Sleep** | 😐 **Normal**
+- **Multi-Model Fusion**: Running both gesture and behavior models simultaneously for context-aware interactions.
+
+---
+
 ## 🌟 Examples
 
 ### Real-world Scenarios

@@ -58,10 +58,16 @@ The provided `Dockerfile` ensures environment parity. It handles the complex ins
 | **Aspect Ratio Distortion** | Mathematical padding logic to maintain hand shape regardless of proximity to camera. |
 | **Dependency Conflicts** | Full Dockerization of the application stack. |
 
-## 6. Future Recommendations
-1.  **Advanced Segmentation**: Transitioning from skin-color masking to MediaPipe Hands for better performance in complex backgrounds.
-2.  **Dynamic Gestures**: Implementing an LSTM or GRU layer to recognize temporal gestures (moving signs) rather than just static poses.
-3.  **Edge Optimization**: Converting the Keras model to TensorFlow Lite (.tflite) for deployment on mobile or IoT devices.
+## 6. Future Recommendations & Planned Expansion
+
+### 6.1 Human Behavior Detection (Active Roadmap)
+The project is transitioning into a multi-modal analysis tool. The next phase involves a dedicated `behavior_detection/` module focusing on:
+- **State Classification**: Utilizing facial landmarks to detect `Laugh`, `Angry`, `Sleep`, and `Normal` states.
+- **Drowsiness Monitoring**: Implementing Eye Aspect Ratio (EAR) tracking to enhance the `Sleep` detection accuracy.
+
+### 6.2 Advanced Technical Shifts
+- **Landmark-Based Recognition**: Transitioning from skin-color masking to MediaPipe Hands for better performance in complex backgrounds.
+- **Edge Optimization**: Converting models to TensorFlow Lite (.tflite) for deployment on mobile or IoT devices.
 
 ## 7. Conclusion
 The Sign Language Recognition System demonstrates a successful integration of classic computer vision techniques with modern deep learning. Its modular design allows for easy expansion to new gestures and provides a stable foundation for further accessibility-focused development.
