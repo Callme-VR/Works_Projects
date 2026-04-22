@@ -179,9 +179,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📧 Contact
 
-**Project Lead** - [Your Name](mailto:your.email@example.com)
+**Project Lead** - [Vishal Rajput](mailto:vr0009534@gmail.com)
 
-Project Link: [https://github.com/yourusername/sign-language-recognition](https://github.com/yourusername/sign-language-recognition)
+Project Link: [https://github.com/Callme-VR/Works_Projects](https://github.com/yourusername/sign-language-recognition)
 
 ---
 *Developed with ❤️ for the Accessibility Community.*
