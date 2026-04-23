@@ -44,8 +44,8 @@ COPY . .
 
 
 
-# Create directory for data collection if it doesn't exist
-RUN mkdir -p Sign_data
+# Create directories for data collection
+RUN mkdir -p Sign_data Face_data
 
 # Expose port if needed for future web interface (optional)
 # EXPOSE 5000
@@ -62,5 +62,8 @@ ENV DISPLAY=:0
 
 
 
-# Default command - can be overridden
+# Default command (hand gesture test)
+# For face detection test, override: docker run <image> python test2.py
+# For data collection: docker run <image> python data_collection.py
+# For face data collection: docker run <image> python data-collection2.py
 CMD ["python", "test.py"]
