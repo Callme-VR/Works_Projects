@@ -3,8 +3,11 @@
 ## 1. Executive Summary
 This report details the technical implementation and architectural design of a multi-modal recognition system encompassing **Sign Language Recognition** and **Facial Behavior Analysis**. The project provides a robust, real-time interface for interpreting human non-verbal cues—both gestures and expressions—facilitating enhanced accessibility and advanced human-computer interaction (HCI).
 
+
 ## 2. System Architecture
 The system is built on a modular dual-pipeline architecture designed for high throughput and modularity.
+
+
 
 ### 2.1 Hardware Requirements
 - Standard RGB Webcam (30+ FPS)
@@ -37,6 +40,7 @@ To ensure model consistency across different lighting and backgrounds, both modu
 1.  **Region of Interest (ROI) Extraction**: Dynamic bounding box calculation with padding.
 2.  **Square Normalization**: Centering the ROI on a 300x300 white canvas to maintain aspect ratio without distortion.
 3.  **Intensity Scaling**: Normalizing pixel values to [0, 1] for the neural network.
+
 
 ## 5. Development Utilities
 - **Dual Data Collection**: Specialized scripts (`data_collection.py` and `data-collection2.py`) automate the generation of training datasets, ensuring "training-inference parity."
