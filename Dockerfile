@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 
 # Prevent Python from writing pyc files and buffering stdout
@@ -66,4 +66,4 @@ ENV DISPLAY=:0
 # For face detection test, override: docker run <image> python test2.py
 # For data collection: docker run <image> python data_collection.py
 # For face data collection: docker run <image> python data-collection2.py
-CMD ["python", "test.py"]
+CMD ["python","data_collection.py","data-collection2.py", "test.py","test2.py"]
